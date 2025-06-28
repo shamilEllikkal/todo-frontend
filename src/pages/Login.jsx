@@ -1,33 +1,69 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import axios from "../axiosIntanse.js"
 const Login = ({ setUser }) => {
-  const [form, setForm] = useState({ username: "", email: "", password: "" });
+  // const [form, setForm] = useState({ username: "", email: "", password: "" });
+  const [email,setEmail]=useState('')
+  const [password,setPassword]=useState('')
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-   const response = await fetch("http://localhost:5000/api/login", {
-      method: "POST",
-      headers: {
-         Authorization: `Bearer ${localStorage.getItem("token")}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(form),
-    });
-    console.log(response.data)
-    const data = await response.json();
-    localStorage.setItem("token", data.accessToken);
-    console.log("Login successful", data);
-    if (response.ok) {
-      setUser(data.User);
-       localStorage.setItem("user", JSON.stringify(data.User));
-        localStorage.setItem("token", data.accessToken);
-      navigate("/todo");
-    } else {
-      alert("Error occurred: " + data.message);
+  //  const fetchLogin =async ()=>{
+    // try {
+    //   const res = await axios.post("/login",{
+    //     email:email,
+    //     password:password
+    //   });
+    //      const data = await res.data;
+    // localStorage.setItem("token", data.accessToken);
+    //   console.log(data)
+
+
+    // }catch{
+    //   console.log('error logining in')
+    // }
+    const data = {
+      email,
+      password
     }
+
+     axios.post('/login', data).then((res)=>{
+      localStorage.setItem("token",res.data.accessToken)
+      localStorage.setItem("user",JSON.stringify(res.data.User))
+      setUser(res.data.User)
+      
+      navigate("/todo")
+      console.log(res.data);
+      
+     }).catch((err)=>{
+      console.log(err);
+      
+     })
+  
+   
+
+  //  }
+
+  //  const response = await fetch("http://localhost:5000/api/login", {
+  //     method: "POST",
+  //     headers: {
+  //        Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(form),
+  //   });
+  //   console.log(response.data)
+ 
+  //   console.log("Login successful", data);
+  //   if (response.ok) {
+ 
+  //   } else {
+  //     alert("Error occurred: " + data.message);
+  //   }
+
+
   };
 
   return (
@@ -47,8 +83,8 @@ const Login = ({ setUser }) => {
           type="email"
           placeholder="Email"
           required
-          value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          value={email}
+          onChange={(e) => setEmail( e.target.value )}
         />
         <input
           style={{
@@ -59,8 +95,8 @@ const Login = ({ setUser }) => {
           type="password"
           placeholder="Password"
           required
-          value={form.password}
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
+          value={password}
+          onChange={(e) => setPassword( e.target.value )}
         />
         <button type="submit" className="add">
           Login

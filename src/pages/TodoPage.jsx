@@ -16,6 +16,9 @@ console.log(user)
   const [tasks, setTasks] = useState([]);
   const [session, setSession] = useState(false)
 
+const handleProfile =()=>{
+  navigate("/profile")
+}
 
  const userSession = useCallback(async () => {
     const response = await fetch("http://localhost:5000/api/user", {
@@ -126,7 +129,9 @@ getTasks();
         <button onClick={logout} className="delete">
           Logout
         </button>
+        <button style={{ backgroundColor: "green" ,color:"white"}} onClick={handleProfile} >profile</button>
       </div>
+      
       <TodoForm addTodo={addTodo} />
       <div>
         {tasks.length==0 ? <p>no tasks</p> : 
